@@ -1,0 +1,84 @@
+{
+  "_comment": "UX Interaction Skill Scorecard — fill in values for any screen or flow analysis",
+  "analysis_target": "",
+  "platform": "iOS | Android | Web | Other",
+  "primary_user_type": "new | experienced | both",
+  "analysis_date": "",
+
+  "dimensions": {
+    "useful": {
+      "score": null,
+      "_comment_score": "1-5. 5 = every element serves user goal. 1 = screen serves platform, not user.",
+      "verdict": "strong | adequate | weak",
+      "top_issue": "",
+      "pattern_cited": "",
+      "anti_pattern_found": ""
+    },
+    "usable": {
+      "score": null,
+      "verdict": "strong | adequate | weak",
+      "steps_to_complete_primary_task": null,
+      "_comment_steps": "Target: 3 or fewer",
+      "unexplained_terms_found": [],
+      "top_issue": "",
+      "pattern_cited": "",
+      "anti_pattern_found": ""
+    },
+    "equitable": {
+      "score": null,
+      "verdict": "strong | adequate | weak",
+      "dark_pattern_detected": false,
+      "dark_pattern_type": "one-sided-disclosure | empty-state-upsell | false-urgency | hidden-tier | confirm-shaming | roach-motel | none",
+      "risk_disclosure_complete": null,
+      "_comment_risk": "true if gains and losses shown with equal weight. null if not applicable.",
+      "top_issue": "",
+      "pattern_cited": "",
+      "anti_pattern_found": ""
+    },
+    "enjoyable": {
+      "score": null,
+      "verdict": "strong | adequate | weak",
+      "squint_test": "pass | fail",
+      "_comment_squint": "pass = one dominant element visible when eyes blurred. fail = equal weight throughout.",
+      "competing_blocks_above_fold": null,
+      "_comment_blocks": "Count of distinct visual blocks without scrolling. Target: 4 or fewer.",
+      "completion_feedback_present": null,
+      "copy_register": "human | neutral | system",
+      "top_issue": "",
+      "pattern_cited": "",
+      "anti_pattern_found": ""
+    }
+  },
+
+  "priority_issues": {
+    "p0": [],
+    "_comment_p0": "Compliance / user safety. Must fix before launch.",
+    "p1": [],
+    "_comment_p1": "Primary path friction. Causes measurable drop-off.",
+    "p2": [],
+    "_comment_p2": "Retention / delight. Important but not blocking."
+  },
+
+  "patterns_applied": [],
+  "_comment_patterns": "Pattern names from pattern-library.md that were cited in recommendations",
+
+  "multi_path_coverage": {
+    "entry_paths": "covered | partial | missing",
+    "user_state_paths": "covered | partial | missing",
+    "data_state_paths": "covered | partial | missing",
+    "interaction_flow_paths": "covered | partial | missing",
+    "environment_paths": "covered | partial | missing",
+    "missing_items": []
+  },
+
+  "summary": {
+    "zh_one_liner": "",
+    "zh_strengths": [],
+    "zh_issues": [],
+    "zh_top_priority": "",
+    "en_one_liner": "",
+    "en_strengths": [],
+    "en_issues": [],
+    "en_top_priority": ""
+  }
+}
