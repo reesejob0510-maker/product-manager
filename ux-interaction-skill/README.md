@@ -129,18 +129,6 @@ ux-interaction-skill/
 
 ---
 
-## 与 Buffett.skill 的关系
-
-| | UX Interaction Skill | Buffett.skill |
-|---|---|---|
-| 核心问题 | 这个界面用户能顺利用吗？ | 这家公司有没有持久竞争优势？ |
-| 分析起点 | 截图 / 设计稿 / 产品场景 | 商业模式 / 年报 / 财务数据 |
-| 判断维度 | Useful / Usable / Equitable / Enjoyable | 护城河 / ROE / FCF / 资本配置 |
-| 时间框架 | 当下用户体验 | 5-10 年竞争优势 |
-| 最适合 | C 端产品经理、UX 设计师、交互评审 | 价值投资研究、股票筛选 |
-
-两个 Skill 可以互补：Buffett 帮你看一家公司的长期价值，UX Interaction Skill 帮你把这家公司的产品做得让用户真正愿意用。
-
 ## License
 
 MIT
