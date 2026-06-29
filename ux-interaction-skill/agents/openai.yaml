@@ -1,0 +1,9 @@
+interface:
+  display_name: "UX Interaction Skill"
+  short_description: "Turns agents into sharp UX analysts and interaction designers"
+  brand_color: "#1a1a2e"
+  default_prompt: "Use ux-interaction-skill to analyze a screen or user flow using the Google UX Four Dimensions (Useful / Usable / Equitable / Enjoyable). Score each dimension, identify specific issues with user scenarios, recommend named patterns from leading apps, check multi-path coverage, and return a bilingual summary."
+policy:
+  allow_implicit_invocation: true
+dependencies:
+  tools: []
