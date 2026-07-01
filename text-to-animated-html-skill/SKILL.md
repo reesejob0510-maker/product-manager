@@ -1,21 +1,21 @@
 ---
-name: text-to-animated-html
+name: 文动
 description: >-
-  Turn any topic or voiceover script into a keyword-animated, platform-styled
-  interactive HTML page. Trigger on: "帮我做成 HTML"、"生成动画网页"、"帮我写口播稿"、
+  文动 (WénDòng) — Turn any topic or voiceover script into a keyword-animated,
+  platform-styled interactive HTML page. Trigger on: "帮我做成 HTML"、"生成动画网页"、"帮我写口播稿"、
   "做成小红书风格"、"做成可交互页面"、"结构化展示"、/html-animate、/voiceover、
   /structured-html。Supports full pipeline (topic → script → HTML) or partial
   modes. Platform styles: 小红书 / X·Twitter / TikTok / Dark Pro.
 license: MIT
 compatibility: Agent Skills-compatible clients. Shell and browser-open access recommended.
 metadata:
-  version: "2.0.0"
-  short-description: Topic or text → voiceover script → keyword-animated HTML
+  version: "2.1.0"
+  short-description: 文动 — 文字/主题 → 口播脚本 → 关键词动画 HTML
 ---
 
-# text-to-animated-html
+# 文动 (WénDòng)
 
-Turn a topic, raw text, or existing voiceover script into a keyword-animated, platform-styled HTML page.
+> 文字动起来。Turn a topic, raw text, or existing voiceover script into a keyword-animated, platform-styled HTML page.
 
 `topic / text → voiceover script → keyword animation map → platform HTML`
 
