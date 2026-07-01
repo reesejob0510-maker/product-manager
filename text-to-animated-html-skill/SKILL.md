@@ -1,14 +1,13 @@
 ---
 name: text-to-animated-html
 description: >-
-  Turn any text or topic into a voiceover script, then into a keyword-animated
+  Turn any topic or voiceover script into a keyword-animated, platform-styled
   interactive HTML page. Trigger on: "帮我做成 HTML"、"生成动画网页"、"帮我写口播稿"、
   "做成小红书风格"、"做成可交互页面"、"结构化展示"、/html-animate、/voiceover、
-  /structured-html。Supports full pipeline (topic → script → HTML) or
-  partial (script only, or HTML only from existing script). Platform styles:
-  小红书 / X·Twitter / TikTok / Dark Pro.
+  /structured-html。Supports full pipeline (topic → script → HTML) or partial
+  modes. Platform styles: 小红书 / X·Twitter / TikTok / Dark Pro.
 license: MIT
-compatibility: Agent Skills-compatible clients. Shell, Write, and browser-open access recommended.
+compatibility: Agent Skills-compatible clients. Shell and browser-open access recommended.
 metadata:
   version: "2.0.0"
   short-description: Topic or text → voiceover script → keyword-animated HTML
@@ -16,22 +15,22 @@ metadata:
 
 # text-to-animated-html
 
-Turn a topic or existing script into a keyword-animated, platform-styled HTML page.
+Turn a topic, raw text, or existing voiceover script into a keyword-animated, platform-styled HTML page.
 
 `topic / text → voiceover script → keyword animation map → platform HTML`
 
-The output should feel like a short-video slide deck: each page carries one idea, key data points animate in, and the visual style matches where the content will live.
+The output is a self-contained HTML file: one idea per slide, key data points animate in on entry, visual style matches the target platform.
 
 ---
 
 ## Core promise
 
-Given a topic, raw text, or an existing voiceover script, run the generation pipeline and return a self-contained HTML file that:
+Given a topic, raw text, or an existing voiceover script, run the generation pipeline and return a single `.html` file that:
 
-- structures the content into full-screen slides, one idea per page;
+- structures content into full-screen slides, one idea per page;
 - auto-detects keywords (numbers, contrasts, questions, emotion words) and assigns each an animation;
 - matches the visual style of the target platform (小红书, X/Twitter, TikTok, or Dark Pro);
-- works offline, zero external dependencies, drop-in to any browser.
+- works offline with zero external dependencies, drop-in to any browser.
 
 ---
 
@@ -39,11 +38,11 @@ Given a topic, raw text, or an existing voiceover script, run the generation pip
 
 Full pipeline is the default.
 
-When the user gives a topic or raw text without a clear time-coded script, generate the voiceover script first before building HTML.
+When the user gives a topic or raw text without a time-coded script, generate the voiceover script first.
 
-When the user already has a script (time-coded or segmented), skip script generation and go directly to keyword mapping.
+When the user already has a script, skip script generation and go directly to keyword mapping.
 
-Always show the keyword-animation table and platform style choice to the user before writing the HTML file — unless the user explicitly says "直接生成" or "skip confirmation".
+Always show the keyword-animation table and confirm the platform style before writing the HTML — unless the user says "直接生成" or "skip confirmation".
 
 When platform is not specified, infer from content type and state the recommendation with a one-line reason.
 
@@ -53,12 +52,12 @@ When platform is not specified, infer from content type and state the recommenda
 
 Classify the request, then work in the matching mode.
 
-- **Full pipeline**: User gives a topic, article, or data dump with no script. Run Phase 0 → Phase 1 → Phase 2.
+- **Full pipeline**: User gives a topic, article, or data without a script. Run Phase 0 → Phase 1 → Phase 2.
 - **Script + HTML**: User provides an existing script. Run Phase 1 → Phase 2.
 - **Script only**: User says "帮我写口播稿" or "只要脚本". Run Phase 0, stop, return the script.
-- **HTML only**: User says "直接做 HTML" and provides structured content. Run Phase 2 only.
-- **Style switch**: User asks to change platform style on an existing HTML. Swap the CSS token block only; preserve all content and animation logic.
-- **Animation edit**: User asks to adjust a specific animation (speed, type, delay). Edit the relevant CSS keyframe or JS trigger only.
+- **HTML only**: User says "直接做 HTML" with structured content. Run Phase 2 only.
+- **Style switch**: User asks to change platform style on existing HTML. Swap CSS token block only; preserve all HTML and JS logic.
+- **Animation edit**: User asks to adjust speed, type, or delay of a specific animation. Edit that keyframe or `trigger()` call only.
 
 ---
 
@@ -109,6 +108,8 @@ Present the mapping as a table before writing HTML:
 | 这到底是为什么？  | 疑问     | typewriter      | 页 6 |
 ```
 
+Read `references/keyword-animation-reference.md` for the full rule set and edge cases.
+
 ### Phase 2 — HTML generation
 
 Write a single self-contained `.html` file to `~/Desktop/<topic>.html`.
@@ -119,22 +120,18 @@ Write a single self-contained `.html` file to `~/Desktop/<topic>.html`.
 <div class="deck">
   <div class="slide go" id="s0">…</div>   <!-- first slide: class="go" is required -->
   <div class="slide" id="s1">…</div>
-  …
 </div>
 ```
 
 **Required JS initialization — never omit**
 
 ```javascript
-// First slide must be positioned manually or it stays invisible
 slides[0].style.opacity  = '1';
 slides[0].style.transform = 'translateY(0)';
 trigger(0); ui();
 ```
 
-**Page transition**
-
-Use opacity + subtle translate (not full-viewport slide) for a softer feel:
+**Page transition — use fade + subtle translate, not full-viewport slide**
 
 ```javascript
 function pos(el, p) {
@@ -144,29 +141,29 @@ function pos(el, p) {
 }
 ```
 
-Transition duration: 1.0–1.2 s for 小红书/Dark Pro; 0.6 s for TikTok.
-
-**Animation reset per slide**
-
-Every time a slide becomes active, `trigger(n)` must reset and replay all animations on that slide — including countUp, progressBar, typewriter, and CSS class toggles:
+**Animation reset on slide entry — always required**
 
 ```javascript
 slides[cur].classList.remove('go');
-void slides[cur].offsetWidth;          // force reflow before re-adding
+void slides[cur].offsetWidth;   // force reflow
 slides[cur].classList.add('go');
 trigger(cur);
 ```
+
+Read `references/html-engineering-guide.md` for full boilerplate and common patterns.
+Read `references/platform-css-tokens.md` for ready-to-paste CSS variable blocks.
+Read `references/slide-templates.md` for HTML snippets by slide type.
 
 ---
 
 ## Animation standards
 
-For every animated element, verify:
+For every animated element, verify before writing:
 
-- `countUp` — element has `data-cu`, `data-target`, `data-suffix`; resets to `0` on each `trigger(n)` call.
+- `countUp` — element has `data-cu`, `data-target`, `data-suffix`; resets to `0` on each `trigger(n)` call; decimal values use `cntUpDec()`.
 - `typewriter` — text node clears to `''` before retyping; speed 80–120 ms/character.
 - `progressBar` — width resets to `0%` with `transition:none` + reflow, then transitions to target.
-- `highlightPulse` — keyframe goes transparent → accent-color background → transparent; single pass only.
+- `highlightPulse` — keyframe: transparent → accent-color background → transparent; single pass only.
 - `stampIn` — `scale(0) rotate(-20deg)` → `scale(1.2) rotate(5deg)` → `scale(1) rotate(0)`, 0.35 s max.
 - `myth-card` — ✕ stampIn → growLine strikethrough → dimText → ✓ checkIn → truth text fadeUp, in sequence.
 
@@ -179,6 +176,8 @@ Animation timing per platform:
 | TikTok   | 0.35 s            | all in ≤ 0.4 s   | 0.8 s           |
 | Dark Pro | 0.6 s             | all in ≤ 1.0 s   | 3.0 s           |
 
+Read `references/animation-tokens.md` for the full keyframe library.
+
 ---
 
 ## Platform styles
@@ -190,37 +189,33 @@ When platform is not specified, recommend based on content type and state the re
 
 - **Canvas**: `width: min(400px, 94vw); height: min(536px, 90dvh); border-radius: 18px`
 - **Colors**: bg `#FAFAF8` · text `#1A1A1A` · accent `#E95C4B` · card `#F5F0EA` · border `#E2DAD0`
-- **Type**: title `font-weight:900; clamp(27px,8vw,38px)` · body `14px, line-height:1.8`
-- **Design rules**: flat surfaces only; no box-shadow; no gradient; accent color ≤ 10% of area; one visual focus per slide; generous whitespace
-- **Animation**: `fadeUp` only — no bounce, no rotate; stagger 100 ms steps; countUp starts 500 ms after slide entry
+- **Type**: title `font-weight:900; clamp(27px,8vw,38px)` · body `14px; line-height:1.8`
+- **Design rules**: flat surfaces; no box-shadow; no gradient; accent ≤ 10% area; one visual focus per slide; generous whitespace; no bounce/rotate animations
 - **Content styles within 小红书**: 严谨科普 / 生活分享 / 投资笔记 / 好物种草
 
 ### X / Twitter — 信息流卡片
-> Financial commentary, data breakdowns, opinion pieces
+> Financial commentary, data breakdowns, opinion pieces, hot takes
 
 - **Canvas**: `width: min(480px, 94vw); aspect-ratio: 1/1`
-- **Colors (dark)**: bg `#0F1117` · text `#E7E9EA` · accent `#1D9BF0` · border `rgba(255,255,255,.1)`
+- **Colors**: bg `#0F1117` · text `#E7E9EA` · accent `#1D9BF0` · border `rgba(255,255,255,.1)`
 - **Type**: title `font-weight:700; clamp(20px,5vw,32px)` · data `font-weight:800; clamp(36px,10vw,64px); color:#1D9BF0`
-- **Design rules**: corner radius ≤ 8px; dividers `1px solid rgba(255,255,255,.08)`; no decorative borders on cards
-- **Animation**: fast entry (0.4 s total); `highlightPulse` once at end; no typewriter (too slow for X's pace)
+- **Design rules**: corner radius ≤ 8px; dividers `1px solid rgba(255,255,255,.08)`; no decorative borders; fast entry, no typewriter
 
 ### TikTok — 竖版爆款
-> Impact hooks, cognitive disruption, emotion-driven content
+> Impact hooks, data shock, cognitive disruption, emotion-driven content
 
 - **Canvas**: `width: min(390px, 94vw); height: 100dvh`
-- **Colors**: bg `#0A0A0A` · text `#FFFFFF` · accent: pick ONE per file from `#00F5FF / #FF2D55 / #FF9500 / #39FF14`
+- **Colors**: bg `#0A0A0A` · text `#FFFFFF` · accent: ONE per file from `#00F5FF / #FF2D55 / #FF9500 / #39FF14`
 - **Type**: main word `font-weight:900; clamp(56px,18vw,96px); letter-spacing:-.03em` · caption `18px; rgba(255,255,255,.7)`
-- **Design rules**: one idea per slide — one big word/number + 1–2 caption lines, nothing else; no side nav dots
-- **Animation**: `stampIn` for large text (0.35 s); caption `fadeUp` at 350 ms delay; countUp 800 ms; page transition 0.6 s with spring easing `cubic-bezier(.16,1,.3,1)`
-- **Forbidden**: multiple accent colors in one file; gradient text; glow that obscures text; any animation step > 1 s
+- **Design rules**: one idea per slide — one big word/number + 1–2 caption lines; no side nav dots; spring page transition `cubic-bezier(.16,1,.3,1)`
+- **Forbidden**: multiple accent colors per file; gradient text; glow that obscures text; any animation step > 1 s
 
 ### Dark Pro — 暗黑专业
 > Finance/tech analysis, business reports, data-heavy decks
 
 - **Canvas**: `position: fixed; inset: 0` (true full-screen)
 - **Colors**: bg `#090d18` · accent `#6366f1` · accent2 `#818cf8` · card `#0f1626` · border `rgba(99,102,241,.18)`
-- **Design rules**: dashed borders for internal containers; large numerals with clamp(60px,16vw,100px); myth-card animations available
-- **Reference**: see `/Users/admin/Desktop/marvell-story.html` for full implementation
+- **Design rules**: dashed borders for internal containers; large numerals `clamp(60px,16vw,100px)`; myth-card animations available
 
 ---
 
@@ -228,17 +223,22 @@ When platform is not specified, recommend based on content type and state the re
 
 Lead with the artifact, not the explanation.
 
-- Show the keyword-animation table before HTML generation; keep it to ≤10 rows.
-- State the platform style and one-line reason.
-- Write the HTML file with `Write` or Python shell (if `Write` is hook-blocked).
-- Start the HTTP server then open: `python3 -m http.server 8765 & sleep 1 && open http://localhost:8765/<file>.html`
+- Show the keyword-animation table before writing HTML; keep it to ≤ 10 rows.
+- State the platform style choice and one-line reason.
+- Write the file, then start HTTP server and open in browser:
+  ```bash
+  python3 -m http.server 8765 &
+  sleep 1 && open http://localhost:8765/<file>.html
+  ```
 - Return the absolute file path.
 - Do not narrate what each CSS rule does. Code comments only for non-obvious intent.
 
-When the user asks for adjustments after preview:
-- Transition speed → change transition duration + lock timeout only
+For post-preview adjustments, edit only the relevant part:
+- Transition speed → change duration + lock timeout only
 - Animation feel → change the specific `@keyframes` or `trigger()` call
-- Style switch → replace CSS token block, preserve HTML structure
+- Style switch → replace CSS token block, preserve HTML and JS
+
+Read `references/output-style-and-language.md` for response patterns and language guidance.
 
 ---
 
@@ -247,19 +247,19 @@ When the user asks for adjustments after preview:
 Never do:
 
 - Invent numbers, dates, or facts not provided by the user
-- Reference external URLs, CDNs, or web fonts in the HTML
+- Reference external URLs, CDNs, fonts, or scripts in the HTML output
 - Use `alert()`, `fetch()`, or `eval()`
 - Apply `box-shadow`, `text-shadow`, or gradient text in 小红书 or X styles
 - Use more than one accent color per TikTok file
-- Skip the `slides[0].style.opacity='1'` initialization
+- Skip `slides[0].style.opacity='1'` initialization
 
 Always verify before writing:
 
 - [ ] `slides[0]` opacity and transform initialized in JS
 - [ ] Every `countUp` element has `data-cu`, `data-target`, `data-suffix`
-- [ ] `trigger(n)` resets and replays all per-slide animations
+- [ ] `trigger(n)` resets and replays all per-slide animations on each entry
 - [ ] Font sizes use `clamp()` — no fixed `px` on headings
-- [ ] File is fully self-contained; no external requests
+- [ ] File is fully self-contained; zero external requests
 
 ---
 
@@ -268,6 +268,12 @@ Always verify before writing:
 Load only what is needed:
 
 - `references/animation-tokens.md` — keyframe library: fadeUp, stampIn, checkIn, growLine, scaleV, dotTravel, highlightPulse, dimText, truthGlow
-- `references/platform-css-tokens.md` — ready-to-paste CSS variable blocks for each platform style
-- `references/slide-templates.md` — HTML snippets for common slide types: hook, metric, myth-card, speed-bar, client-grid, closing
-- `references/voiceover-examples.md` — example scripts by content type (finance, lifestyle, science, product)
+- `references/platform-css-tokens.md` — ready-to-paste CSS variable blocks per platform
+- `references/slide-templates.md` — HTML snippets for common slide types: hook, metric, myth-card, speed-bar, closing
+- `references/html-engineering-guide.md` — full JS boilerplate, goTo/trigger/pos patterns, common bugs
+- `references/keyword-animation-reference.md` — full keyword detection rules and edge cases
+- `references/output-style-and-language.md` — response patterns, confirmation phrases, post-preview language
+- `assets/keyword-animation-map.md` — quick-reference table for all keyword → animation mappings
+- `assets/prompt-pack.md` — ready-to-copy prompts for common use cases
+- `examples/xhs-skill-intro-demo.md` — annotated walkthrough: skill self-introduction in 小红书 style
+- `evals/test-cases.md` — trigger and behavior tests
