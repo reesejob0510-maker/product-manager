@@ -1,7 +1,7 @@
 ---
 name: 文动
 description: >-
-  文动 (WénDòng) — Turn any topic or voiceover script into a keyword-animated,
+  文动 (text animation) — Turn any topic or voiceover script into a keyword-animated,
   platform-styled interactive HTML page. Trigger on: "帮我做成 HTML"、"生成动画网页"、"帮我写口播稿"、
   "做成小红书风格"、"做成可交互页面"、"结构化展示"、/html-animate、/voiceover、
   /structured-html。Supports full pipeline (topic → script → HTML) or partial
@@ -13,7 +13,7 @@ metadata:
   short-description: 文动 — 文字/主题 → 口播脚本 → 关键词动画 HTML
 ---
 
-# 文动 (WénDòng)
+# 文动 (text animation)
 
 > 文字动起来。Turn a topic, raw text, or existing voiceover script into a keyword-animated, platform-styled HTML page.
 
